@@ -7,46 +7,51 @@ const itemEmojis = [
 
 module.exports = (client, message) => {
   if(!isValidSchematic(message.content)) return false;
-  try {
-    const schematic = Schematic.decode(message.content)
+  
+  const schematic = decodeSchematic(message.content)
+  if(!schematic) return false;
+  
+  const embed = new MessageEmbed()
+    .setAuthor(message.author.tag, message.author.displayAvatarURL())
+    .setTitle(schematic.name)
+    .setFooter(schematic.description)
     
-    const embed = new MessageEmbed()
-      .setAuthor(message.author.tag, message.author.displayAvatarURL())
-      .setTitle(schematic.name)
-      .setFooter(schematic.description)
-      
-    var requirementsString = ""
-    const requirements = schematic.requirements
-    for(itemName in requirements){
-      var itemAmount = requirements[itemName]
-      var itemEmoji = itemEmojis.find(e => e.name == itemName)
-      if(itemEmoji){
-        var emoji = (itemEmoji.emoji) ? itemEmoji.emoji : itemEmoji[itemName]['emoji'] = client.emojis.cache.get(itemEmoji.id)
-      
-        requirementsString += `${emoji}${itemAmount} `
-      } else {
-        requirementsString += ` ${itemAmount} ${itemName},`
-      }
+  var requirementsString = ""
+  const requirements = schematic.requirements
+  for(itemName in requirements){
+    var itemAmount = requirements[itemName]
+    var itemEmoji = itemEmojis.find(e => e.name == itemName)
+    if(itemEmoji){
+      var emoji = (itemEmoji.emoji) ? itemEmoji.emoji : itemEmoji[itemName]['emoji'] = client.emojis.cache.get(itemEmoji.id)
+    
+      requirementsString += `${emoji}${itemAmount} `
+    } else {
+      requirementsString += ` ${itemAmount} ${itemName},`
     }
-    embed.addField('Requirements', requirementsString.slice(0, requirementsString.length-1))
-      
-    schematic.toImageBuffer()
-      .then(async imageBuffer => {
-        const attachment = new MessageAttachment(imageBuffer, 'schematic.png')
-    
-        embed.attachFiles([attachment])
-        embed.setImage('attachment://schematic.png')
-        
-        await message.delete()
-        message.channel.send(embed)
-        
-        return true;
-      })
-  } catch (error) {
-    console.log(error)
-    return false;
   }
+  embed.addField('Requirements', requirementsString.slice(0, requirementsString.length-1))
+    
+  schematic.toImageBuffer()
+    .then(async imageBuffer => {
+      const attachment = new MessageAttachment(imageBuffer, 'schematic.png')
+  
+      embed.attachFiles([attachment])
+      embed.setImage('attachment://schematic.png')
+      
+      await message.delete()
+      message.channel.send(embed)
+      
+      return true;
+    })
 }
+
+function decodeSchematic(base64Code){
+  try {
+    return Schematic.decode(base64Code);
+  } catch (error) {
+    return null;
+  }
+} 
 
 function isValidSchematic(base64Code) {
   try {

@@ -9,8 +9,8 @@ module.exports = {
     if (!message.guild) return;
     if (message.author.bot) return;
     
-    botMentionFilter(client, message)
-    schematicFilter(client, message)
+    if(botMentionFilter(client, message)) return;
+    if(schematicFilter(client, message)) return;
   
     if (!message.content.startsWith(process.env.PREFIX)) return;
   
