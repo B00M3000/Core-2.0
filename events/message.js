@@ -12,11 +12,11 @@ module.exports = {
     if(botMentionFilter(client, message)) return;
     if(schematicFilter(client, message)) return;
   
-    if (!message.content.startsWith(process.env.PREFIX)) return;
+    if (!message.content.startsWith(client.config.PREFIX)) return;
   
     console.log(`${message.content} | ${message.author.tag} -- ${message.channel.name} -- ${message.guild.toString()}`)
   
-    const args = message.content.slice(process.env.PREFIX.length).split(/ +/);
+    const args = message.content.slice(client.config.PREFIX.length).split(/ +/);
     const cmd = args.shift().toLowerCase();
   
     var command = client.commands.get(cmd.toLowerCase())
@@ -24,10 +24,10 @@ module.exports = {
     if( !command ) client.commands.forEach( $command => { $command.aliases.forEach( alias => { if(alias == cmd) command = $command } ) } )
   
     if(command){
-      if(command.reqPerm == "BOT_ADMIN" && !client.ADMINS.find(admin => admin.ID === message.author.id)) return message.channel.send("This command is reserved for bot admins only.")
+      if(command.reqPerm == "BOT_ADMIN" && !client.config.ADMINS.find(admin => admin.id === message.author.id)) return message.channel.send("This command is reserved for bot admins only.")
   
       if(command.reqPerm != "BOT_ADMIN" && command.reqPerm != "NONE" && !message.member.hasPermission(command.reqPerm)) {
-        if(!client.ADMINS.find(admin => admin.ID === message.author.id)) return message.channel.send(`You need \`${command.reqPerm}\` permmision to run this command.`)
+        if(!client.config.ADMINS.find(admin => admin.id === message.author.id)) return message.channel.send(`You need \`${command.reqPerm}\` permmision to run this command.`)
         else message.channel.send(`Bot admin detected, bypassed \`${command.reqPerm}\` permmisions for ${message.author.tag}`)
       }
       

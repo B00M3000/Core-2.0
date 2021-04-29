@@ -30,12 +30,15 @@ module.exports = (client, message) => {
     }
   }
   embed.addField('Requirements', requirementsString.slice(0, requirementsString.length-1))
+  
+  const schematicBuffer = Buffer.from(message.content, 'base64')
+  const schematicAttachment = new MessageAttachment(schematicBuffer, `${schematic.name}.msch`)
     
   schematic.toImageBuffer()
     .then(async imageBuffer => {
       const attachment = new MessageAttachment(imageBuffer, 'schematic.png')
   
-      embed.attachFiles([attachment])
+      embed.attachFiles([attachment, schematicAttachment])
       embed.setImage('attachment://schematic.png')
       
       await message.delete()

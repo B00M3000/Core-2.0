@@ -12,6 +12,8 @@ mongo().then(() => {
   console.log('Mongo Connection Established')
 })
 
+client.config = require('./config.json')
+
 client.commandFiles = walkSync(path.join(__dirname, '/commands'));
 client.eventFiles = walkSync(path.join(__dirname, '/events'));
 
@@ -19,7 +21,8 @@ client.commands = new Collection();
 client.events = new Collection();
 
 for (const file of client.commandFiles) {
-  const command = require(`${file}`);
+  const command = require(`${file}`)
+  command.path = file;
   client.commands.set(command.name, command);
   console.log(`Loaded: ${command.name}`)
 }
