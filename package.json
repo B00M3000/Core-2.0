@@ -1,0 +1,25 @@
+{
+  "name": "Core-20",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^4.1.1",
+    "debug": "^4.3.1",
+    "discord.js": "^12.5.3",
+    "dotenv": "^8.2.0",
+    "mindustry-schematic-parser": "^2.1.0",
+    "mongoose": "^5.12.5"
+  },
+  "devDependencies": {
+    "concurrently": "^6.0.0",
+    "nodemon": "^2.0.7"
+  }
+}
